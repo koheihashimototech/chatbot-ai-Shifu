@@ -1,0 +1,54 @@
+ci:
+  skip: [eslint]  # Skip ESLint hooks in pre-commit.ci since not work
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+    -   id: check-yaml
+        exclude: ^src/web/pnpm-lock\.yaml$
+    -   id: check-json
+    -   id: check-merge-conflict
+    -   id: check-symlinks
+    -   id: end-of-file-fixer
+        exclude: ^src/web/pnpm-lock\.yaml$
+    -   id: trailing-whitespace
+        exclude: ^src/web/pnpm-lock\.yaml$
+    -   id: pretty-format-json
+        args: ['--autofix', '--indent=2', '--no-ensure-ascii', '--top-keys=langName']
+        files: ^(src/web/public/locales/.*\.json|src/cook-web/public/locales/.*\.json)$
+    -   id: requirements-txt-fixer
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.13.1
+    hooks:
+    -   id: ruff-check
+        args: [ --fix ]
+    -   id: ruff-format
+-   repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.9.1  # use latest stable version
+    hooks:
+    -   id: commitizen
+        stages: [commit-msg]
+        additional_dependencies: ['markupsafe==2.0.1']
+-   repo: local
+    hooks:
+    -   id: prettier-cook-web
+        name: Prettier cook-web files
+        entry: prettier
+        language: node
+        files: ^src/cook-web/.*\.(js|jsx|ts|tsx|mjs|cjs|css|scss|md|json)$
+        args: ['--write', '--config', 'src/cook-web/.prettierrc']
+        additional_dependencies: ['prettier@^3.5.3']
+-   repo: local
+    hooks:
+    -   id: eslint
+        name: ESLint cook-web files (errors only)
+        entry: bash -c 'cd src/cook-web && npm run lint-file -- $(echo "$@" | sed "s|src/cook-web/||g")' --
+        language: system
+        files: ^src/cook-web/.*\.(js|jsx|ts|tsx)$
+-   repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.36.0
+    hooks:
+    -   id: eslint
+        name: ESLint web files (errors only)
+        files: ^src/web/.*\.(js|jsx|ts|tsx)$
+        args: [--config, src/web/eslint.config.cjs, --max-warnings=0, --fix]

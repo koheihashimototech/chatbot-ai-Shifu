@@ -1,0 +1,6 @@
+CONTINUE = "Continue"
+LOGIN = "Login"
+CHECKOUT = "Checkout"
+INPUT = "Input"
+CHECKCODE = "Verification Code"
+PHONE = "Phone"
